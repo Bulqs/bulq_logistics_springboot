@@ -21,7 +21,6 @@ import com.bulq.logistics.models.Account;
 import com.bulq.logistics.models.Notification;
 import com.bulq.logistics.payload.notification.AddNotificationPayloadDTO;
 import com.bulq.logistics.payload.notification.NotificationViewDTO;
-import com.bulq.logistics.payload.notification.UpdateNotificationPayloadDTO;
 import com.bulq.logistics.services.AccountService;
 import com.bulq.logistics.services.NotificationService;
 import com.bulq.logistics.util.constants.ReadStatus;
