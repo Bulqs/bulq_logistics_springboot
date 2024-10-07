@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 import com.bulq.logistics.util.constants.PickupType;
 import com.bulq.logistics.util.constants.ShipmentType;
+import com.bulq.logistics.util.constants.Status;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -26,7 +27,9 @@ public class Booking {
     @GeneratedValue(strategy= GenerationType.SEQUENCE)
     private long id;
 
-    private String delivery_status;//PENDING,DELIVERED,CANCELLED
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status_delivery", columnDefinition = "enum('NEW', 'COMPLETED', 'PENDING', 'CANCELLED') DEFAULT 'NEW'")
+    private Status delivery_status;//PENDING,DELIVERED,CANCELLED
 
     private String sender_firstname;
 

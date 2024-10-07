@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,6 +21,7 @@ import com.bulq.logistics.models.Account;
 import com.bulq.logistics.models.Notification;
 import com.bulq.logistics.payload.notification.AddNotificationPayloadDTO;
 import com.bulq.logistics.payload.notification.NotificationViewDTO;
+import com.bulq.logistics.payload.notification.UpdateNotificationPayloadDTO;
 import com.bulq.logistics.services.AccountService;
 import com.bulq.logistics.services.NotificationService;
 import com.bulq.logistics.util.constants.ReadStatus;
@@ -88,7 +90,7 @@ public class NotificationController {
         email = authentication.getName();
         Optional<Account> optionalAccountAuth = accountService.findByEmail(email);
         Account accountAuth;
-        if (optionalAccountAuth.isPresent()) {
+        if (!optionalAccountAuth.isPresent()) {
             return ResponseEntity.badRequest().body(null);
         }
         Optional<Account> optionalAccount = accountService.findById(accountId);
@@ -109,6 +111,39 @@ public class NotificationController {
                     notification.getMessage(), notification.getStatus()));
         }
         return ResponseEntity.ok(notifications);
+    }
+
+    @PutMapping(value = "/{notificationId}/update-notification", produces = "application/json")
+    @ApiResponse(responseCode = "200", description = "View notifications for a user")
+    @ApiResponse(responseCode = "401", description = "Token missing")
+    @ApiResponse(responseCode = "403", description = "Token error")
+    @Operation(summary = "View single rating")
+    @SecurityRequirement(name = "bulq-demo-api")
+    public ResponseEntity<String> updateNotification(@PathVariable("notificationId") Long notificationId,
+            Authentication authentication) {
+        String email = "";
+        email = authentication.getName();
+        Optional<Account> optionalAccountAuth = accountService.findByEmail(email);
+        Optional<Notification> optionalNotification = notificationService.findById(notificationId);
+        Account accountAuth;
+        if (!optionalAccountAuth.isPresent()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        if (!optionalNotification.isPresent()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+
+        Account account;
+        Notification notification;
+        accountAuth = optionalAccountAuth.get();
+        notification = optionalNotification.get();
+        if (accountAuth.getId() != notification.getAccount().getId() || accountAuth.getAuthorities() == "ADMIN") {
+            return ResponseEntity.badRequest().body(null);
+        }
+        notification.setStatus(ReadStatus.READ);
+        notification.setAccount(accountAuth);
+        notificationService.save(notification);
+        return ResponseEntity.ok("Notification has been read successfully!");
     }
 
 }

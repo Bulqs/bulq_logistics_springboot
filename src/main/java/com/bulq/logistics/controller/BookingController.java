@@ -27,7 +27,8 @@ import com.bulq.logistics.models.Booking;
 import com.bulq.logistics.models.DeliveryActions;
 import com.bulq.logistics.models.Notification;
 import com.bulq.logistics.payload.booking.BADOBookingPayloadDTO;
-import com.bulq.logistics.payload.booking.CancelPayloadDTO;
+import com.bulq.logistics.payload.booking.BookingSummaryDTO;
+import com.bulq.logistics.payload.booking.UpdateBookingPayloadDTO;
 import com.bulq.logistics.payload.booking.DPBookingPayloadDTO;
 import com.bulq.logistics.payload.booking.FilterBookingViewDTO;
 import com.bulq.logistics.payload.booking.PUPBookingPayloadDTO;
@@ -52,6 +53,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import com.bulq.logistics.util.constants.Status;
 
 @RestController
 @RequestMapping("/api/v1/booking")
@@ -410,7 +413,7 @@ public class BookingController {
     @ApiResponse(responseCode = "204", description = "Album updated")
     @Operation(summary = "Update an Album")
     @SecurityRequirement(name = "bulq-demo-api")
-    public ResponseEntity<String> updateAlbum(@Valid @RequestBody CancelPayloadDTO payloadDTO,
+    public ResponseEntity<String> updateAlbum(@Valid @RequestBody UpdateBookingPayloadDTO payloadDTO,
             @PathVariable("deliveryCode") String deliveryCode,
             Authentication authentication) {
         String email = authentication.getName();
@@ -431,4 +434,35 @@ public class BookingController {
         return ResponseEntity.ok("Order cancelled successfully");
     }
 
+    @GetMapping("/summary")
+    @ApiResponse(responseCode = "200", description = "booking summary stats")
+    @ApiResponse(responseCode = "401", description = "Token missing")
+    @ApiResponse(responseCode = "403", description = "Token Error")
+    @Operation(summary = "get summary of bookings")
+    @SecurityRequirement(name = "bulq-demo-api")
+    public ResponseEntity<List<BookingSummaryDTO>> getBookingSummary(
+            @RequestParam(required = false) List<Status> statuses,
+            @RequestParam(required = false) Integer day,
+            @RequestParam(required = false) String month,
+            @RequestParam(required = false) Integer year) {
+
+        List<BookingSummaryDTO> bookingSummary = bookingService.getBookingSummary(statuses, day, month, year);
+        return new ResponseEntity<>(bookingSummary, HttpStatus.OK);
+    }
+
+    @GetMapping("/summary-amounts")
+    @ApiResponse(responseCode = "200", description = "booking summary with amount stats")
+    @ApiResponse(responseCode = "401", description = "Token missing")
+    @ApiResponse(responseCode = "403", description = "Token Error")
+    @Operation(summary = "get summary of bookings with amounts earned")
+    @SecurityRequirement(name = "bulq-demo-api")
+    public ResponseEntity<List<BookingSummaryDTO>> getBookingSummaryWithAmount(
+            @RequestParam(required = false) List<Status> statuses,
+            @RequestParam(required = false) Integer day,
+            @RequestParam(required = false) String month,
+            @RequestParam(required = false) Integer year) {
+
+        List<BookingSummaryDTO> bookingSummary = bookingService.getBookingSummary(statuses, day, month, year);
+        return new ResponseEntity<>(bookingSummary, HttpStatus.OK);
+    }
 }

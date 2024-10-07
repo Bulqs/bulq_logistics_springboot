@@ -48,6 +48,7 @@ import com.bulq.logistics.services.AccountService;
 import com.bulq.logistics.services.BookingService;
 import com.bulq.logistics.services.EmailService;
 import com.bulq.logistics.services.TokenService;
+import com.bulq.logistics.util.auth.CustomUserDetails;
 import com.bulq.logistics.util.constants.AccountError;
 import com.bulq.logistics.util.constants.AccountSuccess;
 import com.bulq.logistics.util.constants.EmailError;
@@ -97,10 +98,15 @@ public class AuthController {
             Authentication authentication = authenticationManager
                     .authenticate(
                             new UsernamePasswordAuthenticationToken(userLogin.getEmail(), userLogin.getPassword()));
-            return ResponseEntity.ok(new TokenDTO(tokenService.generateToken(authentication)));
+            // Extract user details from authentication object
+            CustomUserDetails userDetails;
+            userDetails = (CustomUserDetails) authentication.getPrincipal(); // assuming is the principal class
+            String token = tokenService.generateToken(authentication);
+
+            return ResponseEntity.ok(new TokenDTO(token, userDetails.getFirstName(), userDetails.getAuthorities()));
         } catch (Exception e) {
             log.debug(AccountError.TOKEN_GENERATION_ERROR.toString() + ": " + e.getMessage());
-            return new ResponseEntity<>(new TokenDTO(null), HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().body(null);
         }
     }
 
@@ -120,6 +126,7 @@ public class AuthController {
             account.setCountry(accountDTO.getCountry());
             account.setState(accountDTO.getState());
             account.setCity(accountDTO.getCity());
+            account.setCreatedAt(LocalDateTime.now());
             account.setAddress(accountDTO.getAddress());
             account.setPhoneNumber(accountDTO.getPhoneNumber());
             String verificationToken = UUID.randomUUID().toString();
