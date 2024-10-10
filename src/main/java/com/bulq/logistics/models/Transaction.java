@@ -3,6 +3,11 @@ package com.bulq.logistics.models;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import com.bulq.logistics.util.constants.TransactionStatus;
 import com.bulq.logistics.util.constants.TransactionType;
 
@@ -37,6 +42,18 @@ public class Transaction {
     private BigDecimal amount;
 
     private String recipient; // who did the transaction
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+    
+    @CreatedDate
+    private LocalDateTime createdDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "transaction_status", columnDefinition = "enum('NEW','COMPLETED', 'PENDING', 'CANCELLED') DEFAULT 'PENDING'")

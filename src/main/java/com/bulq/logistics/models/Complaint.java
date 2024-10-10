@@ -2,6 +2,11 @@ package com.bulq.logistics.models;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import com.bulq.logistics.util.constants.ComplaintType;
 
 import jakarta.persistence.Column;
@@ -37,6 +42,18 @@ public class Complaint {
     private LocalDateTime createdAt;
 
     private String resolution;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+    
+    @CreatedDate
+    private LocalDateTime createdDate;
 
     // private String notes;
 

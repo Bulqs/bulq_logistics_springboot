@@ -2,6 +2,11 @@ package com.bulq.logistics.models;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -28,6 +33,18 @@ public class Rating {
     private String stars;
 
     private LocalDateTime createdAt;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+    
+    @CreatedDate
+    private LocalDateTime createdDate;
 
     //Many to one relationship with product
     // @ManyToOne

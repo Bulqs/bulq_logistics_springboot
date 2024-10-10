@@ -2,6 +2,11 @@ package com.bulq.logistics.models;
 
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+
 import com.bulq.logistics.util.constants.PickupType;
 import com.bulq.logistics.util.constants.ShipmentType;
 import com.bulq.logistics.util.constants.Status;
@@ -112,6 +117,18 @@ public class Booking {
     private String dropoff_time;
 
     private String deliveryId;
+
+    @CreatedBy
+    private String createdBy;
+
+    @LastModifiedBy
+    private String modifiedBy;
+
+    @LastModifiedDate
+    private LocalDateTime lastModifiedDate;
+    
+    @CreatedDate
+    private LocalDateTime createdDate;
 
     //Many to one relationship with user
     @ManyToOne
